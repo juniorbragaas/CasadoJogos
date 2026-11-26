@@ -391,3 +391,33 @@ export function getChosenRouletteNumbers(
   return Array.from(chosen).sort((a, b) => a - b);
 }
 
+/**
+ * Updates a single prize card and resets the roulette game history so all balls
+ * return to their unchosen state for a fresh game.
+ */
+export function applyPrizeCardEditAndReset(
+  state: RussianRoulettePersistedState,
+  cardNumber: number,
+  description: string
+): RussianRoulettePersistedState {
+  return {
+    prizeCards: updatePrizeCard(state.prizeCards, cardNumber, description),
+    history: [],
+  };
+}
+
+/**
+ * Shuffles all 60 prize descriptions onto new numbers and resets the roulette
+ * game history so a fresh game starts cleanly.
+ */
+export function applyPrizeShuffleAndReset(
+  state: RussianRoulettePersistedState,
+  randomIndexFn: (length: number) => number = getSecureRandomIndex
+): RussianRoulettePersistedState {
+  return {
+    prizeCards: shufflePrizeCards(state.prizeCards, randomIndexFn),
+    history: [],
+  };
+}
+
+

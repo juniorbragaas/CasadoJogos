@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   CheckCircle2,
@@ -7,6 +7,7 @@ import {
   Gift,
   Lock,
   RotateCcw,
+  Shuffle,
   Sparkles,
   Trash2,
   Volume2,
@@ -37,6 +38,7 @@ interface RussianRouletteViewProps {
   activeSubmenu: RussianRouletteSubmenu;
   prizeCards: PrizeCard[];
   history: RouletteDrawRecord[];
+  resetToken: number;
   onChangeSubmenu: (submenu: RussianRouletteSubmenu) => void;
   onSaveCard: (cardNumber: number, description: string) => void;
   onShuffleCards: () => void;
@@ -50,6 +52,7 @@ export function RussianRouletteView({
   activeSubmenu,
   prizeCards,
   history,
+  resetToken,
   onChangeSubmenu,
   onSaveCard,
   onShuffleCards,
@@ -76,6 +79,20 @@ export function RussianRouletteView({
     number: number;
     description: string;
   } | null>(null);
+  const [mainShuffleCount, setMainShuffleCount] = useState(0);
+
+  // Reinitialize wheel & active round whenever prizes are edited/shuffled or game is reset
+  useEffect(() => {
+    if (resetToken === 0) return;
+    setPhase('idle');
+    setDrawnPair(null);
+    setSelectedNumber(null);
+    setRevealedCard(null);
+    setSpinPlan(null);
+    setPointerDeg(108);
+    setInnerRingDeg(0);
+    setSecondaryPointerDeg(null);
+  }, [resetToken]);
 
   const openedCardNumbers = useMemo(
     () => getChosenRouletteNumbers(history, null),
@@ -110,6 +127,7 @@ export function RussianRouletteView({
     setSelectedNumber(null);
     setRevealedCard(null);
     setSecondaryPointerDeg(null);
+    setMainShuffleCount(0);
     setSpinPlan({
       id: spinCounterRef.current,
       startPointerDeg: pointerDeg,
@@ -160,6 +178,12 @@ export function RussianRouletteView({
     [prizeCards]
   );
 
+  const handleMainShuffleClick = useCallback(() => {
+    if (phase === 'spinning' || filledCount === 0) return;
+    onShuffleCards();
+    setMainShuffleCount((prev) => prev + 1);
+  }, [phase, filledCount, onShuffleCards]);
+
   return (
     <div id="roleta-russa-topo" className="space-y-6 scroll-mt-20">
       {/* Module Header & Submenu Switcher */}
@@ -175,7 +199,7 @@ export function RussianRouletteView({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           {/* Submenu Segmented Navigation */}
           <div
             role="tablist"
@@ -213,20 +237,38 @@ export function RussianRouletteView({
           </div>
 
           {activeSubmenu === 'sorteio' && (
-            <button
-              type="button"
-              onClick={() => setSoundEnabled((prev) => !prev)}
-              aria-pressed={soundEnabled}
-              aria-label={soundEnabled ? 'Desativar som da roleta' : 'Ativar som da roleta'}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
-            >
-              {soundEnabled ? (
-                <Volume2 className="w-3.5 h-3.5 text-[#B91C1C]" aria-hidden="true" />
-              ) : (
-                <VolumeX className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
-              )}
-              <span>{soundEnabled ? 'Som ligado' : 'Som desligado'}</span>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={handleMainShuffleClick}
+                disabled={phase === 'spinning' || filledCount === 0}
+                data-testid="roleta-main-shuffle-btn"
+                title={
+                  filledCount === 0
+                    ? 'Cadastre ao menos um prêmio para embaralhar'
+                    : 'Embaralhar os prêmios em novos números e reiniciar a roleta'
+                }
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#991B1B] bg-red-50 border border-red-200 hover:bg-red-100 hover:border-red-300 rounded-lg transition-colors cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed whitespace-nowrap"
+              >
+                <Shuffle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>Embaralhar Prêmios</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSoundEnabled((prev) => !prev)}
+                aria-pressed={soundEnabled}
+                aria-label={soundEnabled ? 'Desativar som da roleta' : 'Ativar som da roleta'}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
+              >
+                {soundEnabled ? (
+                  <Volume2 className="w-3.5 h-3.5 text-[#B91C1C]" aria-hidden="true" />
+                ) : (
+                  <VolumeX className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
+                )}
+                <span>{soundEnabled ? 'Som ligado' : 'Som desligado'}</span>
+              </button>
+            </>
           )}
         </div>
       </section>
@@ -243,6 +285,29 @@ export function RussianRouletteView({
         />
       ) : (
         <div className="space-y-6">
+          {mainShuffleCount > 0 && (
+            <div
+              role="status"
+              data-testid="roleta-main-shuffle-feedback"
+              className="flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm font-semibold text-emerald-900 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3"
+            >
+              <span className="inline-flex items-center gap-2">
+                <Shuffle className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
+                <span>
+                  Prêmios embaralhados em novos números e jogo da roleta reiniciado!
+                  {mainShuffleCount > 1 ? ` (${mainShuffleCount}x)` : ''}
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setMainShuffleCount(0)}
+                className="text-xs font-semibold text-emerald-800 hover:underline cursor-pointer"
+              >
+                Fechar
+              </button>
+            </div>
+          )}
+
           {/* Main 2-Column Draw Stage: Left Gold/Obsidian Wheel + Right Selection & Red Prize Card Reveal */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Column: 8-Second Dual-Ring Roulette Wheel */}

@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  applyPrizeCardEditAndReset,
+  applyPrizeShuffleAndReset,
   computeWheelSpinTargets,
   createDefaultPrizeCards,
   createEmptyPrizeCards,
@@ -187,4 +189,41 @@ test('getChosenRouletteNumbers collects unique valid chosen numbers from history
   // Ignores out-of-range numbers safely
   assert.deepEqual(getChosenRouletteNumbers(history, 99), [3, 45]);
 });
+
+test('editing or shuffling prizes resets roulette draw history to empty', () => {
+  const initialState = {
+    prizeCards: createDefaultPrizeCards(),
+    history: [
+      {
+        id: 'h1',
+        timestamp: '2026-11-26T00:00:00.000Z',
+        drawnPair: [4, 38] as [number, number],
+        chosenNumber: 4,
+        prizeDescription: 'Cafeteira Elétrica Individual',
+      },
+      {
+        id: 'h2',
+        timestamp: '2026-11-26T00:01:00.000Z',
+        drawnPair: [10, 52] as [number, number],
+        chosenNumber: 52,
+        prizeDescription: 'Tablet 10 Polegadas Wi-Fi',
+      },
+    ],
+  };
+
+  const afterEdit = applyPrizeCardEditAndReset(initialState, 1, 'Novo Prêmio Especial');
+  assert.equal(getPrizeDescription(afterEdit.prizeCards, 1), 'Novo Prêmio Especial');
+  assert.deepEqual(afterEdit.history, []);
+  assert.deepEqual(getChosenRouletteNumbers(afterEdit.history), []);
+
+  const afterShuffle = applyPrizeShuffleAndReset(initialState);
+  assert.deepEqual(afterShuffle.history, []);
+  assert.deepEqual(getChosenRouletteNumbers(afterShuffle.history), []);
+  assert.ok(
+    afterShuffle.prizeCards.some(
+      (c, idx) => c.description !== initialState.prizeCards[idx].description
+    )
+  );
+});
+
 

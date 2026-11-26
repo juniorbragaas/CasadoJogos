@@ -225,11 +225,12 @@ export function RussianRoulettePrizesView({
         {savedFeedback !== null && (
           <div
             role="status"
+            data-testid="roleta-save-prize-feedback"
             className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2"
           >
             <Check className="w-4 h-4 shrink-0" aria-hidden="true" />
             <span>
-              Cartão {formatCardNumber(savedFeedback)} salvo com sucesso!
+              Cartão {formatCardNumber(savedFeedback)} salvo com sucesso! O jogo da Roleta da Sorte foi reiniciado.
             </span>
           </div>
         )}
@@ -365,7 +366,7 @@ export function RussianRoulettePrizesView({
             <span className="inline-flex items-center gap-2">
               <Shuffle className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
               <span>
-                Prêmios embaralhados aleatoriamente e salvos em novos números!
+                Prêmios embaralhados aleatoriamente e salvos em novos números! O jogo da Roleta da Sorte foi reiniciado.
                 {shuffleCount > 1 ? ` (${shuffleCount}x)` : ''}
               </span>
             </span>

@@ -16,12 +16,12 @@ import {
   saveRussianRouletteState,
 } from './utils/storage';
 import {
+  applyPrizeCardEditAndReset,
+  applyPrizeShuffleAndReset,
   createDefaultPrizeCards,
   createEmptyPrizeCards,
   PrizeCard,
   RouletteDrawRecord,
-  shufflePrizeCards,
-  updatePrizeCard,
 } from './utils/russianRouletteEngine';
 import { getNextBingoGameNumber } from './utils/bingoEngine';
 import { AppModule, Header, NavSection } from './components/Header';
@@ -76,19 +76,17 @@ export default function App() {
   // Russian Roulette state (persisted locally: 60 prize cards + draw history)
   const [russianRouletteSubmenu, setRussianRouletteSubmenu] =
     useState<RussianRouletteSubmenu>('sorteio');
-  const [rouletteCards, setRouletteCards] = useState<PrizeCard[]>(
-    () => loadRussianRouletteState().prizeCards
+  const [rouletteState, setRouletteState] = useState(() =>
+    loadRussianRouletteState()
   );
-  const [rouletteHistory, setRouletteHistory] = useState<RouletteDrawRecord[]>(
-    () => loadRussianRouletteState().history
-  );
+  const [rouletteResetToken, setRouletteResetToken] = useState(0);
+
+  const rouletteCards: PrizeCard[] = rouletteState.prizeCards;
+  const rouletteHistory: RouletteDrawRecord[] = rouletteState.history;
 
   useEffect(() => {
-    saveRussianRouletteState({
-      prizeCards: rouletteCards,
-      history: rouletteHistory,
-    });
-  }, [rouletteCards, rouletteHistory]);
+    saveRussianRouletteState(rouletteState);
+  }, [rouletteState]);
 
   const registeredPrizesCount = useMemo(
     () => rouletteCards.filter((c) => c.description.trim().length > 0).length,
@@ -461,29 +459,48 @@ export default function App() {
 
   const handleSaveRouletteCard = useCallback(
     (cardNumber: number, description: string) => {
-      setRouletteCards((prev) => updatePrizeCard(prev, cardNumber, description));
+      setRouletteState((prev) =>
+        applyPrizeCardEditAndReset(prev, cardNumber, description)
+      );
+      setRouletteResetToken((prev) => prev + 1);
     },
     []
   );
 
   const handleRestoreDefaultRouletteCards = useCallback(() => {
-    setRouletteCards(createDefaultPrizeCards());
+    setRouletteState({
+      prizeCards: createDefaultPrizeCards(),
+      history: [],
+    });
+    setRouletteResetToken((prev) => prev + 1);
   }, []);
 
   const handleClearAllRouletteCards = useCallback(() => {
-    setRouletteCards(createEmptyPrizeCards());
+    setRouletteState({
+      prizeCards: createEmptyPrizeCards(),
+      history: [],
+    });
+    setRouletteResetToken((prev) => prev + 1);
   }, []);
 
   const handleShuffleRouletteCards = useCallback(() => {
-    setRouletteCards((prev) => shufflePrizeCards(prev));
+    setRouletteState((prev) => applyPrizeShuffleAndReset(prev));
+    setRouletteResetToken((prev) => prev + 1);
   }, []);
 
   const handleAddRouletteHistory = useCallback((record: RouletteDrawRecord) => {
-    setRouletteHistory((prev) => [record, ...prev]);
+    setRouletteState((prev) => ({
+      ...prev,
+      history: [record, ...prev.history],
+    }));
   }, []);
 
   const handleClearRouletteHistory = useCallback(() => {
-    setRouletteHistory([]);
+    setRouletteState((prev) => ({
+      ...prev,
+      history: [],
+    }));
+    setRouletteResetToken((prev) => prev + 1);
   }, []);
 
   const handleBingoDrawBall = useCallback(() => {
@@ -682,6 +699,7 @@ export default function App() {
             activeSubmenu={russianRouletteSubmenu}
             prizeCards={rouletteCards}
             history={rouletteHistory}
+            resetToken={rouletteResetToken}
             onChangeSubmenu={setRussianRouletteSubmenu}
             onSaveCard={handleSaveRouletteCard}
             onShuffleCards={handleShuffleRouletteCards}
