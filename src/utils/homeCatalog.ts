@@ -1,4 +1,8 @@
-export type HomeGameCardId = 'loterias' | 'bingo' | 'roleta-russa';
+export type HomeGameCardId =
+  | 'loterias'
+  | 'bingo'
+  | 'roleta-russa'
+  | 'baralho-bks';
 
 export interface HomeGameSubAction {
   id: string;
@@ -96,6 +100,31 @@ export const HOME_GAME_CARDS: HomeGameCard[] = [
       { id: 'sorteio', label: 'Sorteios' },
       { id: 'cadastro', label: 'Cadastro de Prêmios' },
     ],
+  },
+  {
+    id: 'baralho-bks',
+    title: 'BARALHO BKS',
+    subtitle: '32 cartas com flip 3D',
+    description:
+      'Mesa minimalista em feltro escuro com 32 cartas viradas para baixo, animação 3D, visualização em tela cheia, embaralhamento fluido e personalização local.',
+    accentColor: '#6B1218',
+    keywords: [
+      'baralho',
+      'bks',
+      'baralho bks',
+      'cartas',
+      'carta',
+      'mesa',
+      'flip',
+      '3d',
+      'embaralhar',
+      'copas',
+      'ouros',
+      'espadas',
+      'paus',
+      '32 cartas',
+    ],
+    subActions: [{ id: 'baralho-abrir', label: 'Abrir Baralho' }],
   },
 ];
 

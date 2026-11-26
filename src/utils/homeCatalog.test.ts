@@ -36,6 +36,15 @@ test('filterHomeGameCards returns all cards on empty query and matches accents/k
   assert.equal(premiosMatch.length, 1);
   assert.equal(premiosMatch[0].id, 'roleta-russa');
 
+  const bksMatch = filterHomeGameCards('baralho bks');
+  assert.equal(bksMatch.length, 1);
+  assert.equal(bksMatch[0].id, 'baralho-bks');
+  assert.equal(bksMatch[0].title, 'BARALHO BKS');
+
+  const bksShortMatch = filterHomeGameCards('bks');
+  assert.equal(bksShortMatch.length, 1);
+  assert.equal(bksShortMatch[0].id, 'baralho-bks');
+
   const noMatch = filterHomeGameCards('xadrez impossivel');
   assert.equal(noMatch.length, 0);
 });

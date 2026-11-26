@@ -9,6 +9,7 @@ import {
   Grid3X3,
   History,
   Home,
+  Layers,
   LayoutGrid,
   Sparkles,
   X,
@@ -30,6 +31,7 @@ interface SidebarMenuProps {
   onSelectLotterySection: (section: NavSection) => void;
   onSelectBingo: () => void;
   onSelectRussianRoulette: (submenu: RussianRouletteSubmenu) => void;
+  onSelectBaralhoBks: () => void;
 }
 
 const LOTTERY_SUBMENUS: {
@@ -78,6 +80,7 @@ export function SidebarMenu({
   onSelectLotterySection,
   onSelectBingo,
   onSelectRussianRoulette,
+  onSelectBaralhoBks,
 }: SidebarMenuProps) {
   const [lotteriesExpanded, setLotteriesExpanded] = useState(true);
   const [rouletteExpanded, setRouletteExpanded] = useState(true);
@@ -458,6 +461,56 @@ export function SidebarMenu({
                   </ul>
                 )}
               </div>
+
+              {/* Item 4: BARALHO BKS */}
+              <button
+                type="button"
+                onClick={() => {
+                  onSelectBaralhoBks();
+                  onClose();
+                }}
+                aria-current={activeModule === 'baralho-bks' ? 'page' : undefined}
+                className={`w-full px-3.5 py-3 rounded-xl border flex items-center justify-between gap-3 text-left transition-colors cursor-pointer ${
+                  activeModule === 'baralho-bks'
+                    ? 'border-[#6B1218] bg-[#6B1218] text-white shadow-xs'
+                    : 'border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                      activeModule === 'baralho-bks'
+                        ? 'bg-white/15 text-white'
+                        : 'bg-[#6B1218] text-white'
+                    }`}
+                  >
+                    <Layers className="w-4 h-4" aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <span className="block font-display text-sm font-bold leading-tight">
+                      BARALHO BKS
+                    </span>
+                    <span
+                      className={`block text-[11px] mt-0.5 truncate ${
+                        activeModule === 'baralho-bks'
+                          ? 'text-amber-100/90'
+                          : 'text-slate-500'
+                      }`}
+                    >
+                      32 cartas com flip 3D e tela cheia
+                    </span>
+                  </div>
+                </div>
+                <span
+                  className={`font-mono text-[11px] font-semibold tabular-nums shrink-0 ${
+                    activeModule === 'baralho-bks'
+                      ? 'text-amber-100/90'
+                      : 'text-slate-500'
+                  }`}
+                >
+                  32
+                </span>
+              </button>
             </nav>
 
             {/* Quiet drawer footer */}

@@ -4,6 +4,7 @@ import {
   Disc3,
   Dices,
   Grid3X3,
+  Layers,
   Search,
   X,
 } from 'lucide-react';
@@ -22,12 +23,14 @@ interface HomeViewProps {
   onSelectLotterySection: (section: NavSection) => void;
   onSelectBingo: () => void;
   onSelectRussianRoulette: (submenu: RussianRouletteSubmenu) => void;
+  onSelectBaralhoBks: () => void;
 }
 
 const CARD_ICONS: Record<HomeGameCardId, typeof Dices> = {
   loterias: Dices,
   bingo: Grid3X3,
   'roleta-russa': Disc3,
+  'baralho-bks': Layers,
 };
 
 export function HomeView({
@@ -37,6 +40,7 @@ export function HomeView({
   onSelectLotterySection,
   onSelectBingo,
   onSelectRussianRoulette,
+  onSelectBaralhoBks,
 }: HomeViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -50,6 +54,8 @@ export function HomeView({
       onSelectLotterySection('jogos');
     } else if (card.id === 'bingo') {
       onSelectBingo();
+    } else if (card.id === 'baralho-bks') {
+      onSelectBaralhoBks();
     } else {
       onSelectRussianRoulette('sorteio');
     }
@@ -60,6 +66,8 @@ export function HomeView({
       onSelectLotterySection(actionId as NavSection);
     } else if (cardId === 'bingo') {
       onSelectBingo();
+    } else if (cardId === 'baralho-bks') {
+      onSelectBaralhoBks();
     } else {
       onSelectRussianRoulette(actionId as RussianRouletteSubmenu);
     }
@@ -71,6 +79,9 @@ export function HomeView({
     }
     if (cardId === 'bingo') {
       return bingoDrawnCount > 0 ? `${bingoDrawnCount}/99 bolas` : '1 a 99';
+    }
+    if (cardId === 'baralho-bks') {
+      return '32 cartas';
     }
     return `${registeredPrizesCount}/60 prêmios`;
   };
@@ -96,7 +107,7 @@ export function HomeView({
             role="searchbox"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Pesquisar jogos (Loterias, Mega-Sena, Bingo, Roleta da Sorte)..."
+            placeholder="Pesquisar jogos (Loterias, Bingo, Roleta da Sorte, Baralho BKS)..."
             className="w-full h-13 pl-12 pr-11 rounded-2xl border border-slate-200 bg-white text-sm sm:text-base text-slate-900 placeholder:text-slate-400 shadow-xs focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all"
           />
           {searchQuery.trim().length > 0 && (
@@ -130,7 +141,7 @@ export function HomeView({
         ) : (
           <div
             data-testid="home-menu-cards"
-            className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch"
+            className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch"
           >
             {visibleCards.map((card) => {
               const Icon = CARD_ICONS[card.id];

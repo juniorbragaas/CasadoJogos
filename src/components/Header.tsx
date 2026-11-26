@@ -1,6 +1,11 @@
 import { Home, Menu } from 'lucide-react';
 
-export type AppModule = 'inicio' | 'loterias' | 'bingo' | 'roleta-russa';
+export type AppModule =
+  | 'inicio'
+  | 'loterias'
+  | 'bingo'
+  | 'roleta-russa'
+  | 'baralho-bks';
 export type NavSection = 'jogos' | 'gerador' | 'volante' | 'historico';
 
 interface HeaderProps {

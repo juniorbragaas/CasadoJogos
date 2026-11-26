@@ -42,6 +42,7 @@ import {
   RussianRouletteView,
 } from './components/RussianRouletteView';
 import { HomeView } from './components/HomeView';
+import { BksDeckView } from './components/BksDeckView';
 
 export default function App() {
   const [activeModule, setActiveModule] = useState<AppModule>('inicio');
@@ -457,6 +458,11 @@ export default function App() {
     []
   );
 
+  const handleSelectBaralhoBks = useCallback(() => {
+    setActiveModule('baralho-bks');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const handleSaveRouletteCard = useCallback(
     (cardNumber: number, description: string) => {
       setRouletteState((prev) =>
@@ -641,8 +647,16 @@ export default function App() {
 
   const pdfGameId = pdfTargetBets[0]?.gameId ?? selectedGameId;
 
+  const isBksModule = activeModule === 'baralho-bks';
+
   return (
-    <div className="min-h-screen bg-[#F7F8FA] text-slate-900">
+    <div
+      className={
+        isBksModule
+          ? 'h-[100dvh] w-screen overflow-hidden overscroll-none bg-[#0C0809] text-slate-900 select-none'
+          : 'min-h-screen bg-[#F7F8FA] text-slate-900'
+      }
+    >
       <Header
         activeModule={activeModule}
         menuOpen={sidebarOpen}
@@ -664,9 +678,16 @@ export default function App() {
         onSelectLotterySection={handleNavigate}
         onSelectBingo={handleSelectBingo}
         onSelectRussianRoulette={handleSelectRussianRoulette}
+        onSelectBaralhoBks={handleSelectBaralhoBks}
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-18 space-y-8">
+      <main
+        className={
+          isBksModule
+            ? 'w-full h-full pt-14 pb-11 px-1.5 sm:px-3 overflow-hidden flex flex-col'
+            : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-18 space-y-8'
+        }
+      >
         {activeModule === 'inicio' ? (
           <HomeView
             savedBetsCount={savedBets.length}
@@ -675,6 +696,7 @@ export default function App() {
             onSelectLotterySection={handleNavigate}
             onSelectBingo={handleSelectBingo}
             onSelectRussianRoulette={handleSelectRussianRoulette}
+            onSelectBaralhoBks={handleSelectBaralhoBks}
           />
         ) : activeModule === 'bingo' ? (
           <BingoView
@@ -708,6 +730,8 @@ export default function App() {
             onAddHistoryRecord={handleAddRouletteHistory}
             onClearHistory={handleClearRouletteHistory}
           />
+        ) : activeModule === 'baralho-bks' ? (
+          <BksDeckView />
         ) : (
           <>
             {/* 1. Eight Official Lotteries Selector with Custom Studio Images */}
@@ -824,6 +848,7 @@ export default function App() {
         onNavigate={handleNavigate}
         onSelectBingo={handleSelectBingo}
         onSelectRussianRoulette={handleSelectRussianRoulette}
+        onSelectBaralhoBks={handleSelectBaralhoBks}
       />
 
       <PdfPrintModal
