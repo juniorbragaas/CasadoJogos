@@ -43,6 +43,7 @@ import {
 } from './components/RussianRouletteView';
 import { HomeView } from './components/HomeView';
 import { BksDeckView } from './components/BksDeckView';
+import { MemoryGameView } from './components/MemoryGameView';
 
 export default function App() {
   const [activeModule, setActiveModule] = useState<AppModule>('inicio');
@@ -463,6 +464,11 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  const handleSelectMemory = useCallback(() => {
+    setActiveModule('memoria');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const handleSaveRouletteCard = useCallback(
     (cardNumber: number, description: string) => {
       setRouletteState((prev) =>
@@ -648,12 +654,16 @@ export default function App() {
   const pdfGameId = pdfTargetBets[0]?.gameId ?? selectedGameId;
 
   const isBksModule = activeModule === 'baralho-bks';
+  const isMemoryModule = activeModule === 'memoria';
+  const isFullViewportModule = isBksModule || isMemoryModule;
 
   return (
     <div
       className={
-        isBksModule
-          ? 'h-[100dvh] w-screen overflow-hidden overscroll-none bg-[#0C0809] text-slate-900 select-none'
+        isFullViewportModule
+          ? `h-[100dvh] w-screen overflow-hidden overscroll-none ${
+              isBksModule ? 'bg-[#0C0809]' : 'bg-[#F7F8FA]'
+            } text-slate-900 select-none`
           : 'min-h-screen bg-[#F7F8FA] text-slate-900'
       }
     >
@@ -679,11 +689,12 @@ export default function App() {
         onSelectBingo={handleSelectBingo}
         onSelectRussianRoulette={handleSelectRussianRoulette}
         onSelectBaralhoBks={handleSelectBaralhoBks}
+        onSelectMemory={handleSelectMemory}
       />
 
       <main
         className={
-          isBksModule
+          isFullViewportModule
             ? 'w-full h-full pt-14 pb-11 px-1.5 sm:px-3 overflow-hidden flex flex-col'
             : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-18 space-y-8'
         }
@@ -697,6 +708,7 @@ export default function App() {
             onSelectBingo={handleSelectBingo}
             onSelectRussianRoulette={handleSelectRussianRoulette}
             onSelectBaralhoBks={handleSelectBaralhoBks}
+            onSelectMemory={handleSelectMemory}
           />
         ) : activeModule === 'bingo' ? (
           <BingoView
@@ -732,6 +744,8 @@ export default function App() {
           />
         ) : activeModule === 'baralho-bks' ? (
           <BksDeckView />
+        ) : activeModule === 'memoria' ? (
+          <MemoryGameView />
         ) : (
           <>
             {/* 1. Eight Official Lotteries Selector with Custom Studio Images */}
@@ -849,6 +863,7 @@ export default function App() {
         onSelectBingo={handleSelectBingo}
         onSelectRussianRoulette={handleSelectRussianRoulette}
         onSelectBaralhoBks={handleSelectBaralhoBks}
+        onSelectMemory={handleSelectMemory}
       />
 
       <PdfPrintModal

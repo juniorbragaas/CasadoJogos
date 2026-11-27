@@ -2,7 +2,8 @@ export type HomeGameCardId =
   | 'loterias'
   | 'bingo'
   | 'roleta-russa'
-  | 'baralho-bks';
+  | 'baralho-bks'
+  | 'memoria';
 
 export interface HomeGameSubAction {
   id: string;
@@ -125,6 +126,27 @@ export const HOME_GAME_CARDS: HomeGameCard[] = [
       '32 cartas',
     ],
     subActions: [{ id: 'baralho-abrir', label: 'Abrir Baralho' }],
+  },
+  {
+    id: 'memoria',
+    title: 'Jogo da Memória',
+    subtitle: 'Até 16 pares · 32 cartas',
+    description:
+      'Cadastre participantes, adicione quantas figuras quiser e dispute quem encontra mais pares com revelação inicial de 4s, flip 3D e placar ao vivo.',
+    accentColor: '#1D4ED8',
+    keywords: [
+      'memoria',
+      'jogo da memoria',
+      'pares',
+      'figuras',
+      'participantes',
+      'cartas',
+      'campeao',
+      'flip',
+      '16 pares',
+      '32 cartas',
+    ],
+    subActions: [{ id: 'memoria-abrir', label: 'Abrir Memória' }],
   },
 ];
 

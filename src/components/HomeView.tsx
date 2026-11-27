@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import {
   ArrowRight,
+  Brain,
   Disc3,
   Dices,
   Grid3X3,
@@ -24,6 +25,7 @@ interface HomeViewProps {
   onSelectBingo: () => void;
   onSelectRussianRoulette: (submenu: RussianRouletteSubmenu) => void;
   onSelectBaralhoBks: () => void;
+  onSelectMemory: () => void;
 }
 
 const CARD_ICONS: Record<HomeGameCardId, typeof Dices> = {
@@ -31,6 +33,7 @@ const CARD_ICONS: Record<HomeGameCardId, typeof Dices> = {
   bingo: Grid3X3,
   'roleta-russa': Disc3,
   'baralho-bks': Layers,
+  memoria: Brain,
 };
 
 export function HomeView({
@@ -41,6 +44,7 @@ export function HomeView({
   onSelectBingo,
   onSelectRussianRoulette,
   onSelectBaralhoBks,
+  onSelectMemory,
 }: HomeViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -56,6 +60,8 @@ export function HomeView({
       onSelectBingo();
     } else if (card.id === 'baralho-bks') {
       onSelectBaralhoBks();
+    } else if (card.id === 'memoria') {
+      onSelectMemory();
     } else {
       onSelectRussianRoulette('sorteio');
     }
@@ -68,6 +74,8 @@ export function HomeView({
       onSelectBingo();
     } else if (cardId === 'baralho-bks') {
       onSelectBaralhoBks();
+    } else if (cardId === 'memoria') {
+      onSelectMemory();
     } else {
       onSelectRussianRoulette(actionId as RussianRouletteSubmenu);
     }
@@ -83,13 +91,16 @@ export function HomeView({
     if (cardId === 'baralho-bks') {
       return '32 cartas';
     }
+    if (cardId === 'memoria') {
+      return '16 pares';
+    }
     return `${registeredPrizesCount}/60 prêmios`;
   };
 
   return (
     <div
       id="inicio-topo"
-      className="max-w-5xl mx-auto py-4 sm:py-8 space-y-8"
+      className="max-w-6xl mx-auto py-4 sm:py-8 space-y-8"
     >
       {/* 1. Single Prominent Game Search Field */}
       <section aria-label="Pesquisar jogos" className="max-w-xl mx-auto">
@@ -107,7 +118,7 @@ export function HomeView({
             role="searchbox"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Pesquisar jogos (Loterias, Bingo, Roleta da Sorte, Baralho BKS)..."
+            placeholder="Pesquisar jogos (Loterias, Bingo, Roleta, Baralho BKS, Memória)..."
             className="w-full h-13 pl-12 pr-11 rounded-2xl border border-slate-200 bg-white text-sm sm:text-base text-slate-900 placeholder:text-slate-400 shadow-xs focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all"
           />
           {searchQuery.trim().length > 0 && (
@@ -141,7 +152,7 @@ export function HomeView({
         ) : (
           <div
             data-testid="home-menu-cards"
-            className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch"
           >
             {visibleCards.map((card) => {
               const Icon = CARD_ICONS[card.id];

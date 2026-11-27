@@ -13,6 +13,7 @@ interface FooterProps {
   onSelectBingo: () => void;
   onSelectRussianRoulette: (submenu: RussianRouletteSubmenu) => void;
   onSelectBaralhoBks: () => void;
+  onSelectMemory: () => void;
 }
 
 const MOBILE_LOTTERY_NAV: { id: NavSection; label: string }[] = [
@@ -34,6 +35,7 @@ export function Footer({
   onSelectBingo,
   onSelectRussianRoulette,
   onSelectBaralhoBks,
+  onSelectMemory,
 }: FooterProps) {
   const scrollToBingo = (id: string) => {
     const el = document.getElementById(id);
@@ -81,9 +83,16 @@ export function Footer({
               <button
                 type="button"
                 onClick={onSelectBaralhoBks}
-                className="px-2 py-1.5 rounded-md whitespace-nowrap shrink-0 text-[#6B1218] font-semibold cursor-pointer"
+                className="px-1.5 py-1.5 rounded-md whitespace-nowrap shrink-0 text-[#6B1218] font-semibold cursor-pointer"
               >
-                Baralho BKS
+                BKS
+              </button>
+              <button
+                type="button"
+                onClick={onSelectMemory}
+                className="px-1.5 py-1.5 rounded-md whitespace-nowrap shrink-0 text-[#1D4ED8] font-semibold cursor-pointer"
+              >
+                Memória
               </button>
             </>
           ) : activeModule === 'loterias' ? (
@@ -146,6 +155,19 @@ export function Footer({
                 Início
               </button>
             </>
+          ) : activeModule === 'memoria' ? (
+            <>
+              <span className="px-2.5 py-1.5 rounded-md whitespace-nowrap shrink-0 text-[#1D4ED8] font-semibold bg-blue-50">
+                Jogo da Memória
+              </span>
+              <button
+                type="button"
+                onClick={onSelectHome}
+                className="px-2.5 py-1.5 rounded-md whitespace-nowrap shrink-0 text-slate-600 hover:text-slate-900 cursor-pointer"
+              >
+                Início
+              </button>
+            </>
           ) : (
             <>
               <button
@@ -185,14 +207,16 @@ export function Footer({
         <div className="hidden md:flex items-center justify-between w-full text-xs text-slate-600">
           <p className="whitespace-nowrap truncate">
             {activeModule === 'inicio'
-              ? 'BRINQUE COM JOGOS · Gerador de Loterias, Bingo 1 a 99, Roleta da Sorte e BARALHO BKS'
+              ? 'BRINQUE COM JOGOS · Loterias, Bingo, Roleta da Sorte, BARALHO BKS e Jogo da Memória'
               : activeModule === 'bingo'
                 ? 'BRINQUE COM JOGOS · Bingo 1 a 99 com roleta e tabuleiro por dezenas'
                 : activeModule === 'roleta-russa'
                   ? 'BRINQUE COM JOGOS · Roleta da Sorte de prêmios (cartões 1 a 60)'
                   : activeModule === 'baralho-bks'
                     ? 'BRINQUE COM JOGOS · BARALHO BKS com 32 cartas, flip 3D e armazenamento local'
-                    : 'BRINQUE COM JOGOS · Gerador de Loterias com impressão calibrada em A4'}
+                    : activeModule === 'memoria'
+                      ? 'BRINQUE COM JOGOS · Jogo da Memória com até 16 pares, placar ao vivo e figuras personalizadas'
+                      : 'BRINQUE COM JOGOS · Gerador de Loterias com impressão calibrada em A4'}
           </p>
           <div className="flex items-center gap-3 shrink-0 tabular-nums">
             {activeModule === 'inicio' ? (
@@ -214,6 +238,10 @@ export function Footer({
             ) : activeModule === 'baralho-bks' ? (
               <span className="text-slate-700 font-medium whitespace-nowrap">
                 Baralho salvo localmente via IndexedDB
+              </span>
+            ) : activeModule === 'memoria' ? (
+              <span className="text-slate-700 font-medium whitespace-nowrap">
+                Participantes e figuras salvos localmente
               </span>
             ) : (
               <button

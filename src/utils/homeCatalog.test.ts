@@ -45,6 +45,11 @@ test('filterHomeGameCards returns all cards on empty query and matches accents/k
   assert.equal(bksShortMatch.length, 1);
   assert.equal(bksShortMatch[0].id, 'baralho-bks');
 
+  const memoriaMatch = filterHomeGameCards('jogo da memoria');
+  assert.equal(memoriaMatch.length, 1);
+  assert.equal(memoriaMatch[0].id, 'memoria');
+  assert.equal(memoriaMatch[0].title, 'Jogo da Memória');
+
   const noMatch = filterHomeGameCards('xadrez impossivel');
   assert.equal(noMatch.length, 0);
 });

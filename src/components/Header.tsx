@@ -5,7 +5,8 @@ export type AppModule =
   | 'loterias'
   | 'bingo'
   | 'roleta-russa'
-  | 'baralho-bks';
+  | 'baralho-bks'
+  | 'memoria';
 export type NavSection = 'jogos' | 'gerador' | 'volante' | 'historico';
 
 interface HeaderProps {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
+  Brain,
   ChevronDown,
   ClipboardList,
   Disc3,
@@ -32,6 +33,7 @@ interface SidebarMenuProps {
   onSelectBingo: () => void;
   onSelectRussianRoulette: (submenu: RussianRouletteSubmenu) => void;
   onSelectBaralhoBks: () => void;
+  onSelectMemory: () => void;
 }
 
 const LOTTERY_SUBMENUS: {
@@ -81,6 +83,7 @@ export function SidebarMenu({
   onSelectBingo,
   onSelectRussianRoulette,
   onSelectBaralhoBks,
+  onSelectMemory,
 }: SidebarMenuProps) {
   const [lotteriesExpanded, setLotteriesExpanded] = useState(true);
   const [rouletteExpanded, setRouletteExpanded] = useState(true);
@@ -509,6 +512,56 @@ export function SidebarMenu({
                   }`}
                 >
                   32
+                </span>
+              </button>
+
+              {/* Item 5: Jogo da Memória */}
+              <button
+                type="button"
+                onClick={() => {
+                  onSelectMemory();
+                  onClose();
+                }}
+                aria-current={activeModule === 'memoria' ? 'page' : undefined}
+                className={`w-full px-3.5 py-3 rounded-xl border flex items-center justify-between gap-3 text-left transition-colors cursor-pointer ${
+                  activeModule === 'memoria'
+                    ? 'border-[#1D4ED8] bg-[#1D4ED8] text-white shadow-xs'
+                    : 'border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                      activeModule === 'memoria'
+                        ? 'bg-white/15 text-white'
+                        : 'bg-[#1D4ED8] text-white'
+                    }`}
+                  >
+                    <Brain className="w-4 h-4" aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <span className="block font-display text-sm font-bold leading-tight">
+                      Jogo da Memória
+                    </span>
+                    <span
+                      className={`block text-[11px] mt-0.5 truncate ${
+                        activeModule === 'memoria'
+                          ? 'text-blue-100'
+                          : 'text-slate-500'
+                      }`}
+                    >
+                      Até 16 pares · Participantes e figuras
+                    </span>
+                  </div>
+                </div>
+                <span
+                  className={`font-mono text-[11px] font-semibold tabular-nums shrink-0 ${
+                    activeModule === 'memoria'
+                      ? 'text-blue-100'
+                      : 'text-slate-500'
+                  }`}
+                >
+                  16
                 </span>
               </button>
             </nav>
